@@ -580,6 +580,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            color: var(--text-primary);
         }
 
         .modal-title {
@@ -1142,54 +1143,6 @@
             color: var(--text-secondary);
         }
 
-        /* Quiz Styles (New for Academy Improvement) */
-        .quiz-container {
-            margin-top: 20px;
-        }
-
-        .quiz-question {
-            margin-bottom: 15px;
-        }
-
-        .quiz-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .quiz-option {
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .quiz-option.selected {
-            background: var(--primary-light);
-            color: white;
-        }
-
-        .quiz-option.correct {
-            background: var(--success);
-            color: white;
-        }
-
-        .quiz-option.incorrect {
-            background: var(--danger);
-            color: white;
-        }
-
-        .quiz-submit {
-            margin-top: 15px;
-            padding: 10px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
         /* Profile Modal */
         .profile-modal-item {
             display: flex;
@@ -1229,6 +1182,86 @@
         .profile-modal-subtitle {
             font-size: 13px;
             color: var(--text-secondary);
+        }
+
+        /* Academy improvements */
+        .academy-hero {
+            background: var(--gradient-main);
+            color: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .academy-hero h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .academy-hero p {
+            opacity: 0.9;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .module-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .module-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            margin: 0 auto 15px;
+        }
+
+        .module-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .module-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
         }
     </style>
 </head>
@@ -1323,99 +1356,162 @@
                 
                 <div class="section-title">
                     <span>Tus Activos</span>
-                    <a href="#" class="see-all">Ver todos <i class="fas fa-chevron-right"></i></a>
+                    <a href="#" class="see-all" onclick="refreshPortfolio()">Actualizar <i class="fas fa-sync-alt"></i></a>
                 </div>
                 
-                <div class="asset-list" id="assetList">
-                    <!-- Assets will be populated by JavaScript -->
+                <div class="asset-list" id="crypto-assets">
+                    <!-- Los activos se cargarán dinámicamente desde el backend simulado -->
                 </div>
-                
+
+                <div class="asset-list hidden" id="stocks-assets">
+                    <!-- Los activos se cargarán dinámicamente desde el backend simulado -->
+                </div>
+            </div>
+            
+            <!-- Charts Tab -->
+            <div class="tab-content" id="charts-tab">
                 <div class="section-title">
-                    <span>Gráfico BTC/USD</span>
-                    <a href="#" class="see-all">1D <i class="fas fa-chevron-down"></i></a>
+                    <span>Gráficos de Trading</span>
                 </div>
-                
+
+                <div class="trading-pair-selector">
+                    <div class="trading-pair active" onclick="switchTradingPair('BTCUSD')">BTC/USD</div>
+                    <div class="trading-pair" onclick="switchTradingPair('ETHUSD')">ETH/USD</div>
+                    <div class="trading-pair" onclick="switchTradingPair('AAPL')">AAPL</div>
+                    <div class="trading-pair" onclick="switchTradingPair('TSLA')">TSLA</div>
+                    <div class="trading-pair" onclick="switchTradingPair('SPY')">SPY</div>
+                </div>
+
                 <div class="chart-container">
                     <div class="chart-header">
-                        <div class="chart-title">Bitcoin</div>
+                        <div class="chart-title" id="chart-title">BTC/USD</div>
                         <div class="chart-timeframes">
-                            <button class="timeframe-btn">1H</button>
-                            <button class="timeframe-btn active">1D</button>
-                            <button class="timeframe-btn">1S</button>
-                            <button class="timeframe-btn">1M</button>
+                            <div class="timeframe-btn active">1D</div>
+                            <div class="timeframe-btn">1W</div>
+                            <div class="timeframe-btn">1M</div>
+                            <div class="timeframe-btn">1Y</div>
                         </div>
                     </div>
-                    <div class="chart-canvas" id="btcChart">
-                        <!-- Chart will be drawn by JavaScript -->
+                    <div class="simple-chart" id="simple-price-chart">
+                        <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="chart-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#2563eb" stop-opacity="0.3" />
+                                    <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                            <path class="chart-line" id="chart-line" d="M0,200 L50,150 L100,170 L150,120 L200,140 L250,100 L300,130 L350,90 L400,110" />
+                            <path class="chart-area" id="chart-area" d="M0,200 L50,150 L100,170 L150,120 L200,140 L250,100 L300,130 L350,90 L400,110 L400,200 L0,200" />
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="trading-view">
+                    <div class="trading-controls">
+                        <div class="loading-overlay" id="tradeLoading">
+                            <div class="loader"></div>
+                        </div>
+                        <button class="trade-btn buy-btn" onclick="showTradeModal('buy')">Comprar</button>
+                        <button class="trade-btn sell-btn" onclick="showTradeModal('sell')">Vender</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cantidad</label>
+                        <input type="number" class="form-input" placeholder="0.0" id="trade-amount" oninput="calculateTradeTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio</label>
+                        <input type="text" class="form-input" id="current-price" value="$57,342.80" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-input" id="trade-total" value="$0.00" readonly>
+                    </div>
+                    <button class="btn btn-primary" onclick="executeTrade()">Ejecutar Orden</button>
+                </div>
+
+                <!-- Sección de MetaTrader API -->
+                <div class="metatrader-section">
+                    <div class="section-title">
+                        <span>Conexión con MetaTrader</span>
+                    </div>
+                    
+                    <div class="api-status">
+                        <div class="status-indicator" id="mt5StatusIndicator"></div>
+                        <span id="mt5StatusText">Desconectado</span>
+                    </div>
+                    
+                    <div class="api-controls">
+                        <button class="btn btn-primary" onclick="connectToMT5()">Conectar a MT5</button>
+                        <button class="btn" style="background: var(--danger); color: white;" onclick="disconnectFromMT5()">Desconectar</button>
+                    </div>
+                    
+                    <div class="mt5-form" style="display: none;" id="mt5Form">
+                        <div class="form-group">
+                            <label class="form-label">Servidor MT5</label>
+                            <input type="text" class="form-input" id="mt5Server" placeholder="ej: broker.mt5.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Número de cuenta</label>
+                            <input type="number" class="form-input" id="mt5Account" placeholder="12345678">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-input" id="mt5Password" placeholder="********">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveMT5Credentials()">Guardar y conectar</button>
                     </div>
                 </div>
             </div>
             
-            <!-- Trading Tab -->
-            <div class="tab-content" id="trading-tab">
+            <!-- Transactions Tab -->
+            <div class="tab-content" id="transactions-tab">
                 <div class="section-title">
-                    <span>Trading</span>
+                    <span>Historial de Transacciones</span>
+                    <a href="#" class="see-all" onclick="loadTransactions()">Actualizar <i class="fas fa-sync-alt"></i></a>
                 </div>
                 
-                <div class="trading-pair-selector">
-                    <div class="trading-pair active">BTC/USD</div>
-                    <div class="trading-pair">ETH/USD</div>
-                    <div class="trading-pair">SOL/USD</div>
-                    <div class="trading-pair">AAPL</div>
-                    <div class="trading-pair">TSLA</div>
-                    <div class="trading-pair">SPY</div>
+                <div class="asset-list" id="transactions-list">
+                    <!-- Las transacciones se cargarán dinámicamente desde el backend simulado -->
                 </div>
-                
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div class="chart-title">BTC/USD - $42,350.60</div>
-                        <div class="chart-timeframes">
-                            <button class="timeframe-btn">1H</button>
-                            <button class="timeframe-btn active">1D</button>
-                            <button class="timeframe-btn">1S</button>
-                            <button class="timeframe-btn">1M</button>
-                        </div>
-                    </div>
-                    <div class="chart-canvas" id="tradingChart">
-                        <!-- Trading chart will be drawn by JavaScript -->
-                    </div>
+            </div>
+            
+            <!-- Markets Tab -->
+            <div class="tab-content" id="markets-tab">
+                <div class="section-title">
+                    <span>Mercados Disponibles</span>
+                    <a href="#" class="see-all">Ver todos <i class="fas fa-chevron-right"></i></a>
                 </div>
-                
-                <div class="trading-view">
-                    <div class="trading-controls">
-                        <div class="loading-overlay" id="tradingLoader">
-                            <div class="loader"></div>
-                        </div>
-                        <button class="trade-btn buy-btn" onclick="executeTrade('buy')">COMPRAR</button>
-                        <button class="trade-btn sell-btn" onclick="executeTrade('sell')">VENDER</button>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Cantidad</label>
-                        <input type="number" class="form-input" placeholder="0.00" value="0.1">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Precio de Entrada</label>
-                        <input type="number" class="form-input" placeholder="0.00" value="42350.60">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Stop Loss</label>
-                        <input type="number" class="form-input" placeholder="0.00" value="41500.00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Take Profit</label>
-                        <input type="number" class="form-input" placeholder="0.00" value="44000.00">
-                    </div>
+
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Buscar activos..." oninput="searchAssets(this.value)">
+                </div>
+
+                <div class="markets-tabs">
+                    <div class="market-tab active" onclick="switchMarketTab('crypto')">Crypto</div>
+                    <div class="market-tab" onclick="switchMarketTab('stocks')">Acciones</div>
+                    <div class="market-tab" onclick="switchMarketTab('etfs')">ETFs</div>
+                    <div class="market-tab" onclick="switchMarketTab('futures')">Futuros</div>
+                </div>
+
+                <div class="asset-list" id="markets-crypto">
+                    <!-- Los mercados se cargarán dinámicamente desde el backend simulado -->
+                </div>
+
+                <div class="asset-list hidden" id="markets-stocks">
+                    <!-- Los mercados se cargarán dinámicamente desde el backend simulado -->
                 </div>
             </div>
             
             <!-- Academy Tab -->
             <div class="tab-content" id="academy-tab">
+                <div class="academy-hero">
+                    <h2>Quantum Academy</h2>
+                    <p>Aprende a invertir como un profesional con nuestro método exclusivo</p>
+                </div>
+                
                 <div class="section-title">
-                    <span>Quantum Academy</span>
+                    <span>Método Quantum</span>
                 </div>
                 
                 <div class="academy-module">
@@ -1423,32 +1519,66 @@
                         <div class="academy-module-icon">
                             <i class="fas fa-atom"></i>
                         </div>
-                        <div class="academy-module-title">Método Quantum</div>
+                        <div class="academy-module-title">El Enfoque Quantum</div>
                     </div>
                     <div class="academy-module-content">
-                        <p>El Método Quantum es un sistema de trading integral que combina análisis técnico, fundamental y sentimiento del mercado para identificar oportunidades de inversión con alto potencial de rentabilidad.</p>
-                        <p>Nuestro enfoque se basa en 3 pilares fundamentales: Momentum, Valor y Sentimiento, aplicados a través de algoritmos propietarios que analizan millones de puntos de datos en tiempo real.</p>
+                        <p>Nuestro método combina análisis técnico, fundamental y sentimiento del mercado para identificar oportunidades de inversión con alto potencial de rentabilidad.</p>
+                        <p>Basado en 3 pilares fundamentales: <strong>Momentum</strong>, <strong>Valor</strong> y <strong>Sentimiento</strong>, aplicados a través de algoritmos propietarios que analizan millones de puntos de datos en tiempo real.</p>
                     </div>
                 </div>
                 
-                <div class="academy-module">
-                    <div class="academy-module-header">
-                        <div class="academy-module-icon">
-                            <i class="fas fa-graduation-cap"></i>
+                <div class="section-title">
+                    <span>Lo que Aprenderás</span>
+                </div>
+                
+                <div class="module-grid">
+                    <div class="module-card">
+                        <div class="module-icon">
+                            <i class="fas fa-chart-line"></i>
                         </div>
-                        <div class="academy-module-title">Lo que Aprenderás</div>
+                        <div class="module-name">Análisis Técnico</div>
+                        <div class="module-desc">Domina gráficos e indicadores</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 65%"></div>
+                        </div>
                     </div>
-                    <div class="academy-module-content">
-                        <p>Nuestro programa educativo está diseñado para transformarte de principiante a trader competente en 12 semanas. Aprenderás:</p>
-                        <ul style="padding-left: 20px; margin: 10px 0;">
-                            <li>Análisis técnico y chartismo</li>
-                            <li>Gestión de riesgo y capital</li>
-                            <li>Psicología del trading</li>
-                            <li>Estrategias de entrada y salida</li>
-                            <li>Uso de indicadores avanzados</li>
-                            <li>Automatización de estrategias</li>
-                        </ul>
+                    
+                    <div class="module-card">
+                        <div class="module-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <div class="module-name">Gestión de Riesgo</div>
+                        <div class="module-desc">Protege y haz crecer tu capital</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 40%"></div>
+                        </div>
                     </div>
+                    
+                    <div class="module-card">
+                        <div class="module-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="module-name">Psicología</div>
+                        <div class="module-desc">Mentalidad del trader exitoso</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="module-name">Automatización</div>
+                        <div class="module-desc">Estrategias algorítmicas</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-title">
+                    <span>Videos Educativos</span>
                 </div>
                 
                 <div class="academy-module">
@@ -1456,13 +1586,19 @@
                         <div class="academy-module-icon">
                             <i class="fas fa-play-circle"></i>
                         </div>
-                        <div class="academy-module-title">Videos Educativos</div>
+                        <div class="academy-module-title">Introducción al Trading</div>
                     </div>
                     <div class="academy-module-content">
                         <p>Accede a nuestra biblioteca de videos educativos con lecciones paso a paso, análisis de mercado en tiempo real y entrevistas con traders profesionales.</p>
                         
                         <div class="video-container">
-                            <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Introducción al Trading con Quantum" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <!-- Simulación de video de YouTube -->
+                            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#1a1a1a; color:white;">
+                                <div style="text-align:center;">
+                                    <i class="fas fa-play-circle" style="font-size:48px; margin-bottom:10px;"></i>
+                                    <p>Video: Estrategias de Entrada y Salida</p>
+                                </div>
+                            </div>
                         </div>
                         
                         <p style="margin-top:15px; font-size:14px; text-align:center;">
@@ -1471,12 +1607,16 @@
                     </div>
                 </div>
                 
+                <div class="section-title">
+                    <span>Lecturas</span>
+                </div>
+                
                 <div class="academy-module">
                     <div class="academy-module-header">
                         <div class="academy-module-icon">
                             <i class="fas fa-book"></i>
                         </div>
-                        <div class="academy-module-title">Lecturas</div>
+                        <div class="academy-module-title">Biblioteca Quantum</div>
                     </div>
                     <div class="academy-module-content">
                         <p>Amplía tus conocimientos con nuestra colección de lecturas esenciales, desde conceptos básicos hasta estrategias avanzadas.</p>
@@ -1501,296 +1641,116 @@
                         </p>
                     </div>
                 </div>
-                
-                <!-- Improved Academy: Added Interactive Quiz Module -->
-                <div class="academy-module">
-                    <div class="academy-module-header">
-                        <div class="academy-module-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <div class="academy-module-title">Quiz Interactivo</div>
-                    </div>
-                    <div class="academy-module-content">
-                        <p>Prueba tus conocimientos con nuestro quiz interactivo. Responde las preguntas y recibe feedback inmediato.</p>
-                        
-                        <div class="quiz-container" id="quizContainer">
-                            <div class="quiz-question">¿Cuál es uno de los pilares del Método Quantum?</div>
-                            <div class="quiz-options">
-                                <div class="quiz-option" onclick="selectOption(this)">Momentum</div>
-                                <div class="quiz-option" onclick="selectOption(this)">Color</div>
-                                <div class="quiz-option" onclick="selectOption(this)">Sabor</div>
-                            </div>
-                            <button class="quiz-submit" onclick="submitQuiz()">Enviar Respuesta</button>
-                            <div id="quizResult" style="margin-top: 10px; font-weight: bold;"></div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
-            <!-- Portfolio Tab -->
-            <div class="tab-content" id="portfolio-tab">
-                <div class="section-title">
-                    <span>Mi Portfolio</span>
-                    <a href="#" class="see-all">Historial <i class="fas fa-chevron-right"></i></a>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div class="chart-title">Rendimiento del Portfolio</div>
-                        <div class="chart-timeframes">
-                            <button class="timeframe-btn">1D</button>
-                            <button class="timeframe-btn">1S</button>
-                            <button class="timeframe-btn active">1M</button>
-                            <button class="timeframe-btn">1A</button>
-                        </div>
-                    </div>
-                    <div class="chart-canvas" id="portfolioChart">
-                        <!-- Portfolio chart will be drawn by JavaScript -->
-                    </div>
+            <!-- Profile Tab -->
+            <div class="tab-content" id="profile-tab">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="profileAvatar">JL</div>
+                    <div class="profile-name" id="profileName">Juan López</div>
+                    <div class="profile-email" id="profileEmail">juan.lopez@email.com</div>
                 </div>
                 
                 <div class="section-title">
-                    <span>Distribución de Activos</span>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="chart-canvas" id="allocationChart">
-                        <!-- Allocation chart will be drawn by JavaScript -->
-                    </div>
-                </div>
-                
-                <div class="section-title">
-                    <span>Transacciones Recientes</span>
-                    <a href="#" class="see-all">Ver todas <i class="fas fa-chevron-right"></i></a>
+                    <span>Mi Cuenta</span>
                 </div>
                 
                 <div class="asset-list">
-                    <div class="asset-item">
-                        <div class="asset-icon" style="background: var(--success);">B</div>
+                    <div class="asset-item" onclick="showSecuritySettings()">
+                        <div class="asset-icon" style="background: var(--success);"><i class="fas fa-shield-alt"></i></div>
                         <div class="asset-details">
-                            <div class="asset-name">Compra de BTC</div>
-                            <div class="asset-amount">0.05 BTC · Hace 2 horas</div>
+                            <div class="asset-name">Seguridad</div>
+                            <div class="asset-amount">Autenticación de dos factores, contraseña</div>
                         </div>
                         <div class="asset-value">
-                            <div class="asset-price">+$2,117.53</div>
-                            <div class="asset-change positive">Completado</div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
                     
-                    <div class="asset-item">
-                        <div class="asset-icon" style="background: var(--danger);">V</div>
+                    <div class="asset-item" onclick="showNotificationsSettings()">
+                        <div class="asset-icon" style="background: var(--warning);"><i class="fas fa-bell"></i></div>
                         <div class="asset-details">
-                            <div class="asset-name">Venta de ETH</div>
-                            <div class="asset-amount">2.5 ETH · Ayer</div>
+                            <div class="asset-name">Notificaciones</div>
+                            <div class="asset-amount">Alertas de precios, transacciones</div>
                         </div>
                         <div class="asset-value">
-                            <div class="asset-price">-$6,250.40</div>
-                            <div class="asset-change positive">Completado</div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
                     
-                    <div class="asset-item">
-                        <div class="asset-icon" style="background: var(--primary);">D</div>
+                    <div class="asset-item" onclick="showBackupSettings()">
+                        <div class="asset-icon" style="background: var(--accent);"><i class="fas fa-key"></i></div>
                         <div class="asset-details">
-                            <div class="asset-name">Depósito</div>
-                            <div class="asset-amount">Transferencia bancaria · Hace 3 días</div>
+                            <div class="asset-name">Respaldar Wallet</div>
+                            <div class="asset-amount">Frase de recuperación de 12 palabras</div>
                         </div>
                         <div class="asset-value">
-                            <div class="asset-price">+$5,000.00</div>
-                            <div class="asset-change positive">Completado</div>
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Settings Tab -->
-            <div class="tab-content" id="settings-tab">
-                <div class="section-title">
-                    <span>Configuración</span>
-                </div>
-                
-                <div class="metatrader-section">
-                    <div class="api-status">
-                        <div class="status-indicator connected"></div>
-                        <span>MetaTrader 5 Conectado</span>
-                    </div>
-                    <p style="margin-bottom: 15px; color: var(--text-secondary);">Conecta tu cuenta de MetaTrader 5 para operar directamente desde Quantum.</p>
-                    
-                    <div class="api-controls">
-                        <button class="btn btn-primary" style="padding: 12px;">Sincronizar Cuenta</button>
-                        <button class="btn" style="padding: 12px; background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border);">Desconectar</button>
-                    </div>
-                </div>
-                
-                <div class="mt5-form">
-                    <div class="form-group">
-                        <label class="form-label">Número de Cuenta MT5</label>
-                        <input type="text" class="form-input" placeholder="Ingresa tu número de cuenta">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Contraseña</label>
-                        <input type="password" class="form-input" placeholder="Ingresa tu contraseña">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Servidor</label>
-                        <input type="text" class="form-input" value="QuantumMarkets-Live">
-                    </div>
-                    
-                    <button class="btn btn-primary">Conectar Cuenta</button>
-                </div>
-                
+
                 <div class="section-title">
                     <span>Preferencias</span>
                 </div>
-                
-                <div class="chart-container">
-                    <div class="form-group">
-                        <label class="form-label">Divisa Principal</label>
-                        <select class="form-input">
-                            <option>USD - Dólar Americano</option>
-                            <option>MXN - Peso Mexicano</option>
-                            <option>EUR - Euro</option>
-                            <option selected>USDT - Tether</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Tema</label>
-                        <select class="form-input">
-                            <option selected>Claro</option>
-                            <option>Oscuro</option>
-                            <option>Automático</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Idioma</label>
-                        <select class="form-input">
-                            <option selected>Español</option>
-                            <option>English</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Límite de Operación Diaria</label>
-                        <input type="number" class="form-input" placeholder="0.00" value="10000.00">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Notificaciones</label>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>Alertas de Precio</span>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider round"></span>
-                            </label>
+
+                <div class="asset-list">
+                    <div class="asset-item" onclick="showAppearanceSettings()">
+                        <div class="asset-icon" style="background: var(--primary);"><i class="fas fa-paint-brush"></i></div>
+                        <div class="asset-details">
+                            <div class="asset-name">Apariencia</div>
+                            <div class="asset-amount">Tema claro/oscuro, idioma</div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                            <span>Noticias del Mercado</span>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider round"></span>
-                            </label>
+                        <div class="asset-value">
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
-                </div>
-                
-                <div class="section-title">
-                    <span>Seguridad</span>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="form-group">
-                        <label class="form-label">Autenticación de Dos Factores</label>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>2FA Habilitado</span>
-                            <label class="switch">
-                                <input type="checkbox" checked>
-                                <span class="slider round"></span>
-                            </label>
+
+                    <div class="asset-item" onclick="showPrivacySettings()">
+                        <div class="asset-icon" style="background: var(--secondary);"><i class="fas fa-user-lock"></i></div>
+                        <div class="asset-details">
+                            <div class="asset-name">Privacidad</div>
+                            <div class="asset-amount">Configuración de datos y privacidad</div>
+                        </div>
+                        <div class="asset-value">
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Bloqueo de App</label>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>Requerir PIN</span>
-                            <label class="switch">
-                                <input type="checkbox">
-                                <span class="slider round"></span>
-                            </label>
+
+                    <div class="asset-item" onclick="showHelp()">
+                        <div class="asset-icon" style="background: var(--accent);"><i class="fas fa-question-circle"></i></div>
+                        <div class="asset-details">
+                            <div class="asset-name">Ayuda y Soporte</div>
+                            <div class="asset-amount">Centro de ayuda, contactar soporte</div>
+                        </div>
+                        <div class="asset-value">
+                            <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
                         </div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Direcciones IP Confiables</label>
-                        <input type="text" class="form-input" placeholder="Añadir IP">
-                    </div>
-                    
-                    <button class="btn" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border); margin-top: 10px;">
-                        <i class="fas fa-shield-alt"></i> Verificar Dispositivo Actual
-                    </button>
                 </div>
             </div>
         </div>
         
-        <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="switchTab('home')">
                 <div class="nav-icon"><i class="fas fa-home"></i></div>
-                <div class="nav-label">Inicio</div>
+                <div>Inicio</div>
             </div>
-            <div class="nav-item" onclick="switchTab('trading')">
+            <div class="nav-item" onclick="switchTab('charts')">
                 <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
-                <div class="nav-label">Trading</div>
+                <div>Gráficos</div>
             </div>
             <div class="nav-item" onclick="switchTab('academy')">
                 <div class="nav-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div class="nav-label">Academy</div>
+                <div>Academy</div>
             </div>
-            <div class="nav-item" onclick="switchTab('portfolio')">
-                <div class="nav-icon"><i class="fas fa-wallet"></i></div>
-                <div class="nav-label">Portfolio</div>
+            <div class="nav-item" onclick="switchTab('markets')">
+                <div class="nav-icon"><i class="fas fa-coins"></i></div>
+                <div>Mercados</div>
             </div>
-            <div class="nav-item" onclick="switchTab('settings')">
-                <div class="nav-icon"><i class="fas fa-cog"></i></div>
-                <div class="nav-label">Ajustes</div>
-            </div>
-        </div>
-        
-        <!-- Notification Center -->
-        <div class="notification-center" id="notificationCenter">
-            <div class="notification-header">
-                <h3>Notificaciones</h3>
-                <button class="close-modal" onclick="hideNotificationCenter()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="notification-item success">
-                <strong>Operación Exitosa</strong>
-                <p>Has comprado 0.05 BTC por $2,117.53</p>
-                <small>Hace 2 horas</small>
-            </div>
-            
-            <div class="notification-item">
-                <strong>Depósito Recibido</strong>
-                <p>Se ha depositado $5,000.00 en tu cuenta</p>
-                <small>Ayer</small>
-            </div>
-            
-            <div class="notification-item warning">
-                <strong>Alerta de Precio</strong>
-                <p>BTC ha alcanzado $42,350.60</p>
-                <small>Hace 3 días</small>
-            </div>
-            
-            <div class="notification-item error">
-                <strong>Intento de Acceso</strong>
-                <p>Se detectó un intento de acceso desde un dispositivo nuevo</p>
-                <small>Hace 5 días</small>
+            <div class="nav-item" onclick="switchTab('profile')">
+                <div class="nav-icon"><i class="fas fa-user"></i></div>
+                <div>Perfil</div>
             </div>
         </div>
         
@@ -1799,17 +1759,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">Mi Perfil</h2>
-                    <button class="close-modal" onclick="hideProfileModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="close-modal" onclick="hideModal('profileModal')">&times;</button>
                 </div>
                 
                 <div class="profile-header">
-                    <div class="profile-avatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <h2 class="profile-name">Juan Pérez</h2>
-                    <p class="profile-email">juan.perez@email.com</p>
+                    <div class="profile-avatar">JL</div>
+                    <div class="profile-name">Juan López</div>
+                    <div class="profile-email">juan.lopez@email.com</div>
                 </div>
                 
                 <div class="profile-modal-item">
@@ -1868,534 +1824,1306 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Send Modal -->
-        <div class="modal" id="sendModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Enviar Fondos</h2>
-                    <button class="close-modal" onclick="hideSendModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Activo</label>
-                    <select class="form-input">
-                        <option>BTC - Bitcoin</option>
-                        <option>ETH - Ethereum</option>
-                        <option>USDT - Tether</option>
-                        <option>USD - Dólar Americano</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Dirección de Destino</label>
-                    <input type="text" class="form-input" placeholder="Ingresa la dirección de wallet">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Cantidad</label>
-                    <input type="number" class="form-input" placeholder="0.00">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Comisión de Red</label>
-                    <select class="form-input">
-                        <option>Baja</option>
-                        <option selected>Media</option>
-                        <option>Alta</option>
-                    </select>
-                </div>
-                
-                <button class="btn btn-primary">Continuar</button>
-            </div>
-        </div>
-        
-        <!-- Receive Modal -->
-        <div class="modal" id="receiveModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Recibir Fondos</h2>
-                    <button class="close-modal" onclick="hideReceiveModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Selecciona Activo</label>
-                    <select class="form-input">
-                        <option>BTC - Bitcoin</option>
-                        <option>ETH - Ethereum</option>
-                        <option>USDT - Tether</option>
-                        <option>USD - Dólar Americano</option>
-                    </select>
-                </div>
-                
-                <div style="text-align: center; margin: 20px 0;">
-                    <div style="width: 200px; height: 200px; background: #f0f0f0; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
-                        <i class="fas fa-qrcode" style="font-size: 100px;"></i>
-                    </div>
-                    <p style="margin-top: 15px; font-size: 14px; color: var(--text-secondary);">Escanea este código QR para recibir fondos</p>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Dirección de Wallet</label>
-                    <input type="text" class="form-input" value="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa" readonly>
-                </div>
-                
-                <button class="btn btn-primary">
-                    <i class="fas fa-copy"></i> Copiar Dirección
-                </button>
-            </div>
-        </div>
-        
-        <!-- Swap Modal -->
-        <div class="modal" id="swapModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Convertir Activos</h2>
-                    <button class="close-modal" onclick="hideSwapModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Desde</label>
-                    <div style="display: flex; gap: 10px;">
-                        <select class="form-input" style="flex: 2;">
-                            <option>BTC - Bitcoin</option>
-                            <option>ETH - Ethereum</option>
-                            <option selected>USDT - Tether</option>
-                            <option>USD - Dólar Americano</option>
-                        </select>
-                        <input type="number" class="form-input" placeholder="0.00" style="flex: 1;">
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin: 10px 0;">
-                    <button class="header-btn" style="background: var(--primary-light);">
-                        <i class="fas fa-exchange-alt"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">A</label>
-                    <div style="display: flex; gap: 10px;">
-                        <select class="form-input" style="flex: 2;">
-                            <option selected>BTC - Bitcoin</option>
-                            <option>ETH - Ethereum</option>
-                            <option>USDT - Tether</option>
-                            <option>USD - Dólar Americano</option>
-                        </select>
-                        <input type="number" class="form-input" placeholder="0.00" style="flex: 1;" value="0.0215">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Tipo de Cambio</label>
-                    <input type="text" class="form-input" value="1 USDT = 0.000023 BTC" readonly>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Comisión</label>
-                    <input type="text" class="form-input" value="0.50 USDT" readonly>
-                </div>
-                
-                <button class="btn btn-primary">Confirmar Conversión</button>
-            </div>
-        </div>
-        
-        <!-- Buy Modal -->
-        <div class="modal" id="buyModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Comprar Cripto</h2>
-                    <button class="close-modal" onclick="hideBuyModal()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Selecciona Activo</label>
-                    <select class="form-input">
-                        <option>BTC - Bitcoin</option>
-                        <option>ETH - Ethereum</option>
-                        <option>SOL - Solana</option>
-                        <option>USDT - Tether</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Monto a Comprar</label>
-                    <input type="number" class="form-input" placeholder="0.00">
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Método de Pago</label>
-                    <select class="form-input">
-                        <option>Tarjeta de Crédito/Débito</option>
-                        <option>Transferencia Bancaria</option>
-                        <option>Saldo de Wallet</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label">Detalles de Precio</label>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span>Precio por BTC:</span>
-                            <span>$42,350.60</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span>Comisión:</span>
-                            <span>$2.50 (1.5%)</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; font-weight: 600;">
-                            <span>Total:</span>
-                            <span>$105.88</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary">Continuar con la Compra</button>
-            </div>
-        </div>
-        
-        <!-- Notification Toast -->
-        <div class="notification" id="notificationToast" style="display: none;">
-            <i class="fas fa-check-circle" style="color: var(--success);"></i>
-            <span id="notificationText">Operación completada con éxito</span>
-        </div>
     </div>
 
     <script>
-        // Datos de ejemplo para activos, categorizados para filtrado por mercado
-        const assetsData = {
-            crypto: [
-                { name: 'Bitcoin', symbol: 'BTC', amount: 0.5, value: 21175.30, change: 2.5, positive: true },
-                { name: 'Ethereum', symbol: 'ETH', amount: 4.2, value: 6250.40, change: 1.8, positive: true },
-                { name: 'Solana', symbol: 'SOL', amount: 35, value: 350.60, change: -0.5, positive: false }
+        // ==============================
+        // SIMULACIÓN DE BACKEND COMPLETO
+        // ==============================
+        
+        // Base de datos simulada
+        const QuantumDB = {
+            users: [
+                {
+                    id: 1,
+                    email: "usuario@quantum.com",
+                    password: "password123",
+                    name: "Juan López",
+                    avatar: "JL",
+                    portfolio: {
+                        balance: 124852.40,
+                        assets: [
+                            { symbol: "ETH", amount: 2.45, value: 87425.60, change: 2.35 },
+                            { symbol: "BTC", amount: 0.0052, value: 6342.80, change: 1.78 },
+                            { symbol: "USDC", amount: 1250, value: 21000.00, change: 0.00 },
+                            { symbol: "AAPL", amount: 5, value: 912.50, change: 1.25 },
+                            { symbol: "TSLA", amount: 3, value: 712.35, change: -0.85 }
+                        ]
+                    },
+                    transactions: [
+                        { id: 1, type: "send", asset: "ETH", amount: -0.12, to: "Carlos Mendoza", date: "Hace 2 horas", status: "completed" },
+                        { id: 2, type: "receive", asset: "BTC", amount: 0.025, from: "Ana López", date: "Ayer a las 15:23", status: "completed" },
+                        { id: 3, type: "swap", asset: "ETH", amount: -0.5, details: "ETH → USDC", date: "12 Oct 2023", status: "completed" },
+                        { id: 4, type: "buy", asset: "AAPL", amount: 5, price: 865.25, date: "5 Oct 2023", status: "completed" },
+                        { id: 5, type: "deposit", asset: "MXN", amount: 25000, date: "3 Oct 2023", status: "completed" }
+                    ],
+                    markets: {
+                        crypto: [
+                            { symbol: "BTC", name: "Bitcoin", price: 57342.80, change: 1.78 },
+                            { symbol: "ETH", name: "Ethereum", price: 3425.60, change: 2.35 },
+                            { symbol: "SOL", name: "Solana", price: 102.45, change: 5.32 },
+                            { symbol: "ADA", name: "Cardano", price: 0.45, change: -1.25 },
+                            { symbol: "DOT", name: "Polkadot", price: 6.80, change: 3.45 }
+                        ],
+                        stocks: [
+                            { symbol: "AAPL", name: "Apple Inc.", price: 182.50, change: 1.25 },
+                            { symbol: "TSLA", name: "Tesla Inc.", price: 237.45, change: -0.85 },
+                            { symbol: "MSFT", name: "Microsoft Corp.", price: 345.28, change: 2.15 },
+                            { symbol: "AMZN", name: "Amazon.com Inc.", price: 145.75, change: 0.95 },
+                            { symbol: "GOOGL", name: "Alphabet Inc.", price: 142.30, change: 1.75 }
+                        ]
+                    },
+                    mt5Credentials: null
+                }
             ],
-            stocks: [
-                { name: 'Apple Inc.', symbol: 'AAPL', amount: 10, value: 450.25, change: 0.3, positive: true },
-                { name: 'Tesla Inc.', symbol: 'TSLA', amount: 5, value: 825.75, change: -1.2, positive: false }
-            ],
-            etfs: [
-                { name: 'SPDR S&P 500', symbol: 'SPY', amount: 15, value: 1125.80, change: 0.8, positive: true }
-            ],
-            futures: [
-                { name: 'Gold Futures', symbol: 'GC', amount: 2, value: 3800.50, change: 1.1, positive: true }
-            ]
+            currentUser: null,
+            authToken: null,
+            mt5Connected: false,
+            
+            // Métodos de autenticación
+            login: function(email, password) {
+                const user = this.users.find(u => u.email === email && u.password === password);
+                if (user) {
+                    this.currentUser = user;
+                    this.authToken = this.generateToken();
+                    return { success: true, token: this.authToken, user: user };
+                }
+                return { success: false, error: "Credenciales inválidas" };
+            },
+            
+            generateToken: function() {
+                return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + 
+                       btoa(JSON.stringify({ userId: this.currentUser.id, exp: Date.now() + 86400000 })) + 
+                       '.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+            },
+            
+            verifyToken: function(token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    return payload.exp > Date.now();
+                } catch (e) {
+                    return false;
+                }
+            },
+            
+            logout: function() {
+                this.currentUser = null;
+                this.authToken = null;
+                this.mt5Connected = false;
+            },
+            
+            // Métodos de portfolio
+            getPortfolio: function() {
+                if (!this.currentUser) return null;
+                return this.currentUser.portfolio;
+            },
+            
+            updatePortfolio: function(updates) {
+                if (!this.currentUser) return false;
+                Object.assign(this.currentUser.portfolio, updates);
+                return true;
+            },
+            
+            // Métodos de transacciones
+            getTransactions: function() {
+                if (!this.currentUser) return [];
+                return this.currentUser.transactions;
+            },
+            
+            addTransaction: function(transaction) {
+                if (!this.currentUser) return false;
+                transaction.id = this.currentUser.transactions.length + 1;
+                this.currentUser.transactions.unshift(transaction);
+                return true;
+            },
+            
+            // Métodos de mercado
+            getMarketData: function(type) {
+                if (!this.currentUser) return [];
+                return this.currentUser.markets[type] || [];
+            },
+            
+            // Métodos de MetaTrader
+            connectToMT5: function(credentials) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        if (credentials && credentials.server && credentials.account && credentials.password) {
+                            this.currentUser.mt5Credentials = credentials;
+                            this.mt5Connected = true;
+                            resolve({ success: true, message: "Conectado a MetaTrader 5" });
+                        } else {
+                            resolve({ success: false, error: "Credenciales inválidas" });
+                        }
+                    }, 2000);
+                });
+            },
+            
+            disconnectFromMT5: function() {
+                this.mt5Connected = false;
+                return { success: true, message: "Desconectado de MetaTrader 5" };
+            },
+            
+            getMT5Status: function() {
+                return this.mt5Connected;
+            },
+            
+            // Simular llamadas API con delay
+            apiCall: function(endpoint, data = null) {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        let response;
+                        
+                        switch(endpoint) {
+                            case '/auth/login':
+                                response = this.login(data.email, data.password);
+                                break;
+                            case '/portfolio':
+                                response = this.getPortfolio();
+                                break;
+                            case '/transactions':
+                                response = this.getTransactions();
+                                break;
+                            case '/markets':
+                                response = this.getMarketData(data.type);
+                                break;
+                            case '/transaction/send':
+                                response = this.addTransaction(data);
+                                break;
+                            case '/trade/execute':
+                                response = this.executeTrade(data);
+                                break;
+                            case '/swap/execute':
+                                response = this.executeSwap(data);
+                                break;
+                            case '/buy/execute':
+                                response = this.executeBuy(data);
+                                break;
+                            case '/mt5/connect':
+                                response = this.connectToMT5(data);
+                                break;
+                            case '/mt5/disconnect':
+                                response = this.disconnectFromMT5();
+                                break;
+                            case '/mt5/status':
+                                response = { connected: this.getMT5Status() };
+                                break;
+                            default:
+                                response = { error: "Endpoint no encontrado" };
+                        }
+                        
+                        resolve(response);
+                    }, 800); // Simular delay de red
+                });
+            },
+            
+            executeTrade: function(tradeData) {
+                if (!this.currentUser) return { success: false };
+                
+                // Simular ejecución de trade
+                const transaction = {
+                    type: tradeData.side,
+                    asset: tradeData.symbol,
+                    amount: tradeData.side === 'buy' ? tradeData.amount : -tradeData.amount,
+                    price: tradeData.price,
+                    total: tradeData.amount * tradeData.price,
+                    date: new Date().toLocaleString(),
+                    status: "completed"
+                };
+                
+                this.addTransaction(transaction);
+                
+                // Actualizar portfolio (simulación)
+                const asset = this.currentUser.portfolio.assets.find(a => a.symbol === tradeData.symbol);
+                if (asset) {
+                    if (tradeData.side === 'buy') {
+                        asset.amount += tradeData.amount;
+                        asset.value = asset.amount * tradeData.price;
+                    } else {
+                        asset.amount -= tradeData.amount;
+                        asset.value = asset.amount * tradeData.price;
+                    }
+                }
+                
+                return { success: true, transaction };
+            },
+            
+            executeSwap: function(swapData) {
+                if (!this.currentUser) return { success: false };
+                
+                // Simular ejecución de swap
+                const transaction = {
+                    type: "swap",
+                    asset: swapData.fromAsset,
+                    amount: -swapData.fromAmount,
+                    details: `${swapData.fromAsset} → ${swapData.toAsset}`,
+                    date: new Date().toLocaleString(),
+                    status: "completed"
+                };
+                
+                this.addTransaction(transaction);
+                
+                // Actualizar portfolio (simulación)
+                const fromAsset = this.currentUser.portfolio.assets.find(a => a.symbol === swapData.fromAsset);
+                const toAsset = this.currentUser.portfolio.assets.find(a => a.symbol === swapData.toAsset);
+                
+                if (fromAsset) {
+                    fromAsset.amount -= swapData.fromAmount;
+                    fromAsset.value = fromAsset.amount * (fromAsset.value / fromAsset.amount);
+                }
+                
+                if (toAsset) {
+                    toAsset.amount += swapData.toAmount;
+                    toAsset.value = toAsset.amount * (toAsset.value / toAsset.amount);
+                }
+                
+                return { success: true, transaction };
+            },
+            
+            executeBuy: function(buyData) {
+                if (!this.currentUser) return { success: false };
+                
+                // Simular ejecución de compra
+                const transaction = {
+                    type: "buy",
+                    asset: buyData.asset,
+                    amount: buyData.amount,
+                    price: buyData.price,
+                    total: buyData.amount * buyData.price,
+                    date: new Date().toLocaleString(),
+                    status: "completed"
+                };
+                
+                this.addTransaction(transaction);
+                
+                // Actualizar portfolio (simulación)
+                const asset = this.currentUser.portfolio.assets.find(a => a.symbol === buyData.asset);
+                if (asset) {
+                    asset.amount += buyData.amount;
+                    asset.value = asset.amount * buyData.price;
+                } else {
+                    this.currentUser.portfolio.assets.push({
+                        symbol: buyData.asset,
+                        amount: buyData.amount,
+                        value: buyData.amount * buyData.price,
+                        change: 0
+                    });
+                }
+                
+                return { success: true, transaction };
+            }
         };
+
+        // ==============================
+        // INTERFAZ Y FUNCIONALIDAD FRONTEND
+        // ==============================
         
-        // Estado de la aplicación
-        let currentTab = 'home';
         let balanceVisible = true;
+        let currentTab = 'home';
         let currentMarket = 'crypto';
+        let currentTradingPair = 'BTCUSD';
         
-        // Inicialización
-        document.addEventListener('DOMContentLoaded', function() {
-            renderAssets();
-            drawCharts();
-        });
-        
-        // Función para iniciar sesión
-        function login() {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContainer').style.display = 'block';
-            showNotification('Sesión iniciada correctamente');
+        // Precios actuales para los diferentes pares
+        const currentPrices = {
+            'BTCUSD': 57342.80,
+            'ETHUSD': 3425.60,
+            'AAPL': 182.50,
+            'TSLA': 237.45,
+            'SPY': 452.36
+        };
+
+        // Tasas de intercambio
+        const swapRates = {
+            'ETHUSDC': 3425.60,
+            'BTCUSDC': 57342.80,
+            'ETHBTC': 0.0597,
+            'USDCETH': 0.000292,
+            'USDCBTC': 0.00001744,
+            'BTCETH': 16.75
+        };
+
+        // Inicializar la aplicación
+        async function initApp() {
+            // Cargar portfolio
+            await loadPortfolio();
+            
+            // Cargar transacciones
+            await loadTransactions();
+            
+            // Cargar mercados
+            await loadMarkets();
+            
+            // Inicializar el gráfico
+            updateSimpleChart(currentTradingPair);
+            
+            // Verificar estado de MT5
+            checkMT5Status();
         }
-        
-        // Función para cerrar sesión
+
+        // Función de login
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const response = await QuantumDB.apiCall('/auth/login', { email, password });
+            
+            if (response.success) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                
+                // Actualizar perfil
+                document.getElementById('profileAvatar').textContent = response.user.avatar;
+                document.getElementById('profileName').textContent = response.user.name;
+                document.getElementById('profileEmail').textContent = response.user.email;
+                
+                // Inicializar la app
+                await initApp();
+                
+                showNotification('Sesión iniciada correctamente');
+            } else {
+                showNotification('Error: ' + response.error, 'error');
+            }
+        }
+
+        // Función de logout
         function logout() {
+            QuantumDB.logout();
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('appContainer').style.display = 'none';
-            hideProfileModal();
+            showNotification('Sesión cerrada');
         }
-        
-        // Función para cambiar de pestaña
-        function switchTab(tabName) {
-            // Ocultar todas las pestañas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
+
+        // Cargar portfolio
+        async function loadPortfolio() {
+            const portfolio = await QuantumDB.apiCall('/portfolio');
+            
+            if (portfolio) {
+                // Actualizar balance
+                document.getElementById('balanceAmount').textContent = `$${portfolio.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                // Actualizar activos
+                renderAssets(portfolio.assets);
+            }
+        }
+
+        // Cargar transacciones
+        async function loadTransactions() {
+            const transactions = await QuantumDB.apiCall('/transactions');
+            
+            if (transactions && transactions.length > 0) {
+                renderTransactions(transactions);
+            }
+        }
+
+        // Cargar mercados
+        async function loadMarkets() {
+            const cryptoMarkets = await QuantumDB.apiCall('/markets', { type: 'crypto' });
+            const stockMarkets = await QuantumDB.apiCall('/markets', { type: 'stocks' });
+            
+            if (cryptoMarkets && cryptoMarkets.length > 0) {
+                renderMarkets(cryptoMarkets, 'crypto');
+            }
+            
+            if (stockMarkets && stockMarkets.length > 0) {
+                renderMarkets(stockMarkets, 'stocks');
+            }
+        }
+
+        // Renderizar activos
+        function renderAssets(assets) {
+            const cryptoContainer = document.getElementById('crypto-assets');
+            const stocksContainer = document.getElementById('stocks-assets');
+            
+            // Limpiar contenedores
+            cryptoContainer.innerHTML = '';
+            stocksContainer.innerHTML = '';
+            
+            // Separar activos por tipo
+            const cryptoAssets = assets.filter(a => ['ETH', 'BTC', 'USDC', 'SOL', 'ADA', 'DOT'].includes(a.symbol));
+            const stockAssets = assets.filter(a => ['AAPL', 'TSLA', 'MSFT', 'AMZN', 'GOOGL'].includes(a.symbol));
+            
+            // Renderizar criptoactivos
+            cryptoAssets.forEach(asset => {
+                const changeClass = asset.change >= 0 ? 'positive' : 'negative';
+                const changeIcon = asset.change >= 0 ? '▲' : '▼';
+                
+                cryptoContainer.innerHTML += `
+                    <div class="asset-item" onclick="showAssetDetails('${asset.symbol}')">
+                        <div class="asset-icon"><i class="fab fa-${asset.symbol.toLowerCase()}"></i></div>
+                        <div class="asset-details">
+                            <div class="asset-name">${getAssetName(asset.symbol)}</div>
+                            <div class="asset-amount">${asset.amount} ${asset.symbol}</div>
+                        </div>
+                        <div class="asset-value">
+                            <div class="asset-price">$${asset.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div class="asset-change ${changeClass}">${changeIcon} ${Math.abs(asset.change)}%</div>
+                        </div>
+                    </div>
+                `;
             });
             
-            // Desactivar todos los elementos de navegación
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
+            // Renderizar acciones
+            stockAssets.forEach(asset => {
+                const changeClass = asset.change >= 0 ? 'positive' : 'negative';
+                const changeIcon = asset.change >= 0 ? '▲' : '▼';
+                
+                stocksContainer.innerHTML += `
+                    <div class="asset-item" onclick="showAssetDetails('${asset.symbol}')">
+                        <div class="asset-icon" style="background: ${getStockColor(asset.symbol)};">${asset.symbol}</div>
+                        <div class="asset-details">
+                            <div class="asset-name">${getAssetName(asset.symbol)}</div>
+                            <div class="asset-amount">${asset.amount} acciones</div>
+                        </div>
+                        <div class="asset-value">
+                            <div class="asset-price">$${asset.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div class="asset-change ${changeClass}">${changeIcon} ${Math.abs(asset.change)}%</div>
+                        </div>
+                    </div>
+                `;
             });
+        }
+
+        // Renderizar transacciones
+        function renderTransactions(transactions) {
+            const container = document.getElementById('transactions-list');
+            container.innerHTML = '';
             
-            // Activar la pestaña seleccionada
-            document.getElementById(`${tabName}-tab`).classList.add('active');
+            transactions.forEach(transaction => {
+                let icon, bgColor, sign;
+                
+                switch(transaction.type) {
+                    case 'send':
+                        icon = 'fa-arrow-up';
+                        bgColor = 'var(--accent)';
+                        sign = '-';
+                        break;
+                    case 'receive':
+                        icon = 'fa-arrow-down';
+                        bgColor = 'var(--success)';
+                        sign = '+';
+                        break;
+                    case 'swap':
+                        icon = 'fa-exchange-alt';
+                        bgColor = 'var(--primary)';
+                        sign = '';
+                        break;
+                    case 'buy':
+                        icon = 'fa-chart-line';
+                        bgColor = 'var(--success)';
+                        sign = '-';
+                        break;
+                    case 'deposit':
+                        icon = 'fa-money-bill-wave';
+                        bgColor = 'var(--warning)';
+                        sign = '+';
+                        break;
+                }
+                
+                container.innerHTML += `
+                    <div class="asset-item">
+                        <div class="asset-icon" style="background: ${bgColor};"><i class="fas ${icon}"></i></div>
+                        <div class="asset-details">
+                            <div class="asset-name">${getTransactionTitle(transaction)}</div>
+                            <div class="asset-amount">${transaction.date} ${transaction.details ? '· ' + transaction.details : ''}</div>
+                        </div>
+                        <div class="asset-value">
+                            <div class="asset-price">${sign}$${Math.abs(transaction.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${transaction.asset}</div>
+                            <div class="asset-change neutral">Completado</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Renderizar mercados
+        function renderMarkets(markets, type) {
+            const container = document.getElementById(`markets-${type}`);
+            if (!container) return;
             
-            // Activar el elemento de navegación correspondiente
-            document.querySelectorAll('.nav-item').forEach(item => {
-                if (item.onclick.toString().includes(tabName)) {
-                    item.classList.add('active');
+            container.innerHTML = '';
+            
+            markets.forEach(asset => {
+                const changeClass = asset.change >= 0 ? 'positive' : 'negative';
+                const changeIcon = asset.change >= 0 ? '▲' : '▼';
+                
+                container.innerHTML += `
+                    <div class="asset-item" onclick="showAssetDetails('${asset.symbol}')">
+                        <div class="asset-icon" style="background: ${type === 'crypto' ? 'var(--primary)' : getStockColor(asset.symbol)};">
+                            ${type === 'crypto' ? `<i class="fab fa-${asset.symbol.toLowerCase()}"></i>` : asset.symbol}
+                        </div>
+                        <div class="asset-details">
+                            <div class="asset-name">${asset.name}</div>
+                            <div class="asset-amount">${type === 'crypto' ? asset.symbol + '/USD' : 'NASDAQ: ' + asset.symbol}</div>
+                        </div>
+                        <div class="asset-value">
+                            <div class="asset-price">$${asset.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div class="asset-change ${changeClass}">${changeIcon} ${Math.abs(asset.change)}%</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Funciones auxiliares
+        function getAssetName(symbol) {
+            const names = {
+                'ETH': 'Ethereum',
+                'BTC': 'Bitcoin',
+                'USDC': 'USDC',
+                'SOL': 'Solana',
+                'ADA': 'Cardano',
+                'DOT': 'Polkadot',
+                'AAPL': 'Apple Inc.',
+                'TSLA': 'Tesla Inc.',
+                'MSFT': 'Microsoft Corp.',
+                'AMZN': 'Amazon.com Inc.',
+                'GOOGL': 'Alphabet Inc.'
+            };
+            return names[symbol] || symbol;
+        }
+
+        function getStockColor(symbol) {
+            const colors = {
+                'AAPL': '#333',
+                'TSLA': '#e82127',
+                'MSFT': '#0070c0',
+                'AMZN': '#ff9900',
+                'GOOGL': '#4285f4'
+            };
+            return colors[symbol] || 'var(--primary)';
+        }
+
+        function getTransactionTitle(transaction) {
+            switch(transaction.type) {
+                case 'send': return `Enviado a ${transaction.to}`;
+                case 'receive': return `Recibido de ${transaction.from}`;
+                case 'swap': return `Intercambio completado`;
+                case 'buy': return `Compra de ${transaction.asset}`;
+                case 'deposit': return `Depósito bancario`;
+                default: return `Transacción`;
+            }
+        }
+
+        // Sincronizar datos
+        async function syncData() {
+            showNotification('Sincronizando datos...');
+            await loadPortfolio();
+            await loadTransactions();
+            showNotification('Datos actualizados');
+        }
+
+        // Refrescar portfolio
+        async function refreshPortfolio() {
+            showNotification('Actualizando portfolio...');
+            await loadPortfolio();
+            showNotification('Portfolio actualizado');
+        }
+
+        // Generar datos para el gráfico SVG simple
+        function generateChartData(pair) {
+            const baseValue = currentPrices[pair];
+            const data = [];
+            let value = baseValue;
+            
+            for (let i = 0; i < 9; i++) {
+                // Variación aleatoria pero consistente
+                const variation = (Math.random() - 0.5) * (baseValue * 0.05);
+                value += variation;
+                data.push(value);
+            }
+            
+            return data;
+        }
+
+        // Actualizar el gráfico SVG
+        function updateSimpleChart(pair) {
+            const data = generateChartData(pair);
+            const maxVal = Math.max(...data);
+            const minVal = Math.min(...data);
+            const range = maxVal - minVal;
+            
+            // Generar puntos para el SVG
+            let pathData = '';
+            let areaData = '';
+            
+            data.forEach((value, index) => {
+                const x = index * 50;
+                // Normalizar el valor entre 0 y 200 (altura del SVG)
+                const y = 200 - ((value - minVal) / range * 180 + 10);
+                
+                if (index === 0) {
+                    pathData = `M0,${y}`;
+                    areaData = `M0,${y}`;
+                } else {
+                    pathData += ` L${x},${y}`;
+                    areaData += ` L${x},${y}`;
                 }
             });
             
-            currentTab = tabName;
+            // Cerrar el área para el relleno
+            areaData += ` L${400},200 L0,200`;
+            
+            // Actualizar el SVG
+            document.getElementById('chart-line').setAttribute('d', pathData);
+            document.getElementById('chart-area').setAttribute('d', areaData);
+            
+            // Actualizar el precio mostrado
+            const currentPrice = data[data.length - 1];
+            document.getElementById('current-price').value = `$${currentPrice.toFixed(2)}`;
+            document.getElementById('modal-trade-price').value = `$${currentPrice.toFixed(2)}`;
+            document.getElementById('trade-price').value = `$${currentPrice.toFixed(2)}`;
+            
+            // Actualizar cálculos
+            calculateTradeTotal();
+            calculateModalTradeTotal();
         }
-        
-        // Función para mostrar/ocultar balance
+
+        function calculateTradeTotal() {
+            const amount = parseFloat(document.getElementById('trade-amount').value) || 0;
+            const price = parseFloat(document.getElementById('current-price').value.replace('$', '').replace(',', '')) || 0;
+            const total = amount * price;
+            document.getElementById('trade-total').value = `$${total.toFixed(2)}`;
+        }
+
+        function calculateModalTradeTotal() {
+            const amount = parseFloat(document.getElementById('modal-trade-amount').value) || 0;
+            const price = parseFloat(document.getElementById('modal-trade-price').value.replace('$', '').replace(',', '')) || 0;
+            const total = amount * price;
+            document.getElementById('modal-trade-total').value = `$${total.toFixed(2)}`;
+        }
+
+        function calculateSwapResult() {
+            const fromAsset = document.getElementById('swapFromAsset').value;
+            const toAsset = document.getElementById('swapToAsset').value;
+            const amount = parseFloat(document.getElementById('swapFromAmount').value) || 0;
+            
+            if (fromAsset && toAsset && amount > 0) {
+                const rateKey = `${fromAsset}${toAsset}`;
+                const rate = swapRates[rateKey] || 1;
+                const result = amount * rate;
+                
+                document.getElementById('swapToAmount').value = result.toFixed(6);
+                document.getElementById('swapRate').value = `1 ${fromAsset} = ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })} ${toAsset}`;
+            }
+        }
+
+        function calculateSwapRate() {
+            const fromAsset = document.getElementById('swapFromAsset').value;
+            const toAsset = document.getElementById('swapToAsset').value;
+            
+            if (fromAsset && toAsset) {
+                const rateKey = `${fromAsset}${toAsset}`;
+                const rate = swapRates[rateKey] || 1;
+                
+                document.getElementById('swapRate').value = `1 ${fromAsset} = ${rate.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })} ${toAsset}`;
+                
+                // Recalcular si hay cantidad ingresada
+                calculateSwapResult();
+            }
+        }
+
+        function switchSwapAssets() {
+            const fromAsset = document.getElementById('swapFromAsset').value;
+            const toAsset = document.getElementById('swapToAsset').value;
+            const fromAmount = document.getElementById('swapFromAmount').value;
+            const toAmount = document.getElementById('swapToAmount').value;
+            
+            // Intercambiar activos
+            document.getElementById('swapFromAsset').value = toAsset;
+            document.getElementById('swapToAsset').value = fromAsset;
+            
+            // Intercambiar cantidades
+            document.getElementById('swapFromAmount').value = toAmount;
+            document.getElementById('swapToAmount').value = fromAmount;
+            
+            // Recalcular tasa
+            calculateSwapRate();
+        }
+
+        function calculateBuyTotal() {
+            const asset = document.getElementById('buyAsset').value;
+            const amount = parseFloat(document.getElementById('buyAmount').value) || 0;
+            
+            if (asset && amount > 0) {
+                let price = 0;
+                
+                switch(asset) {
+                    case 'BTC': price = currentPrices['BTCUSD']; break;
+                    case 'ETH': price = currentPrices['ETHUSD']; break;
+                    case 'USDC': price = 1; break;
+                }
+                
+                const total = amount * price;
+                
+                document.getElementById('buyPrice').value = `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('buyTotal').value = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        }
+
+        // Funciones para MetaTrader
+        async function connectToMT5() {
+            const mt5Form = document.getElementById('mt5Form');
+            if (mt5Form.style.display === 'none') {
+                mt5Form.style.display = 'block';
+                return;
+            }
+            
+            const server = document.getElementById('mt5Server').value;
+            const account = document.getElementById('mt5Account').value;
+            const password = document.getElementById('mt5Password').value;
+            
+            if (!server || !account || !password) {
+                showNotification('Por favor, completa todos los campos', 'error');
+                return;
+            }
+            
+            updateMT5Status('connecting', 'Conectando...');
+            
+            const response = await QuantumDB.apiCall('/mt5/connect', {
+                server: server,
+                account: account,
+                password: password
+            });
+            
+            if (response.success) {
+                updateMT5Status('connected', 'Conectado a MT5');
+                showNotification('Conexión exitosa con MetaTrader 5');
+                document.getElementById('mt5Form').style.display = 'none';
+            } else {
+                updateMT5Status('disconnected', 'Error de conexión');
+                showNotification('Error al conectar con MetaTrader 5: ' + response.error, 'error');
+            }
+        }
+
+        async function disconnectFromMT5() {
+            const response = await QuantumDB.apiCall('/mt5/disconnect');
+            updateMT5Status('disconnected', 'Desconectado');
+            showNotification(response.message);
+        }
+
+        function saveMT5Credentials() {
+            // Esta función se llama desde el formulario de MT5
+            connectToMT5();
+        }
+
+        async function checkMT5Status() {
+            const response = await QuantumDB.apiCall('/mt5/status');
+            if (response.connected) {
+                updateMT5Status('connected', 'Conectado a MT5');
+            } else {
+                updateMT5Status('disconnected', 'Desconectado');
+            }
+        }
+
+        function updateMT5Status(status, text) {
+            const indicator = document.getElementById('mt5StatusIndicator');
+            const statusText = document.getElementById('mt5StatusText');
+            
+            indicator.className = 'status-indicator ' + status;
+            statusText.textContent = text;
+        }
+
         function toggleBalance() {
             const balanceAmount = document.getElementById('balanceAmount');
             const balanceMXN = document.getElementById('balanceMXN');
             const eyeToggle = document.getElementById('eyeToggle');
             
+            balanceVisible = !balanceVisible;
+            
             if (balanceVisible) {
-                balanceAmount.textContent = '$••••••••';
-                balanceMXN.textContent = '≈ •••••••• MXN';
-                eyeToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
-            } else {
                 balanceAmount.textContent = '$124,852.40';
                 balanceMXN.textContent = '≈ $2,356,420.80 MXN';
                 eyeToggle.innerHTML = '<i class="fas fa-eye"></i>';
+            } else {
+                balanceAmount.textContent = '•••••••';
+                balanceMXN.textContent = '≈ ••••••••• MXN';
+                eyeToggle.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            }
+        }
+
+        function switchTab(tab) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Deactivate all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Activate selected tab
+            document.getElementById(`${tab}-tab`).classList.add('active');
+            
+            // Activate selected nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            const activeIndex = Array.from(navItems).findIndex(item => 
+                item.getAttribute('onclick').includes(`'${tab}'`)
+            );
+            
+            if (activeIndex >= 0) {
+                navItems[activeIndex].classList.add('active');
             }
             
-            balanceVisible = !balanceVisible;
-        }
-        
-        // Función para renderizar activos con filtro por mercado
-        function renderAssets() {
-            const assetList = document.getElementById('assetList');
-            assetList.innerHTML = '';
+            currentTab = tab;
             
-            const filteredAssets = assetsData[currentMarket] || [];
-            
-            filteredAssets.forEach(asset => {
-                const changeClass = asset.positive ? 'positive' : 'negative';
-                const changeIcon = asset.positive ? '▲' : '▼';
-                
-                const assetItem = document.createElement('div');
-                assetItem.className = 'asset-item';
-                assetItem.innerHTML = `
-                    <div class="asset-icon">${asset.symbol.charAt(0)}</div>
-                    <div class="asset-details">
-                        <div class="asset-name">${asset.name}</div>
-                        <div class="asset-amount">${asset.amount} ${asset.symbol}</div>
-                    </div>
-                    <div class="asset-value">
-                        <div class="asset-price">$${asset.value.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="asset-change ${changeClass}">${changeIcon} ${Math.abs(asset.change)}%</div>
-                    </div>
-                `;
-                
-                assetList.appendChild(assetItem);
-            });
+            // Si cambiamos a la pestaña de gráficos, actualizamos el gráfico
+            if (tab === 'charts') {
+                updateSimpleChart(currentTradingPair);
+            }
         }
-        
-        // Función para cambiar mercado
+
         function switchMarket(market) {
+            currentMarket = market;
+            
+            // Deactivate all market tabs
             document.querySelectorAll('.market-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            const tabs = document.querySelectorAll('.market-tab');
-            let index;
-            switch(market) {
-                case 'crypto': index = 0; break;
-                case 'stocks': index = 1; break;
-                case 'etfs': index = 2; break;
-                case 'futures': index = 3; break;
+            // Activate selected market tab
+            const marketTabs = document.querySelectorAll('.market-tab');
+            const activeIndex = Array.from(marketTabs).findIndex(tab => 
+                tab.getAttribute('onclick').includes(`'${market}'`)
+            );
+            
+            if (activeIndex >= 0) {
+                marketTabs[activeIndex].classList.add('active');
             }
-            tabs[index].classList.add('active');
             
-            currentMarket = market;
-            renderAssets();
-        }
-        
-        // Función mejorada para dibujar gráficos con datos dinámicos
-        function drawCharts() {
-            const charts = ['btcChart', 'tradingChart', 'portfolioChart', 'allocationChart'];
-            
-            // Datos de ejemplo dinámicos para gráficos
-            const chartData = {
-                btcChart: [150, 100, 50, 120, 190, 80, 130],
-                tradingChart: [100, 120, 80, 140, 90, 160, 110],
-                portfolioChart: [80, 100, 120, 110, 130, 140, 150],
-                allocationChart: [120, 150, 100, 130, 110, 140, 120]  // Simulación de pastel o línea
-            };
-            
-            charts.forEach(chartId => {
-                const chart = document.getElementById(chartId);
-                if (chart) {
-                    const data = chartData[chartId] || [150, 100, 50, 120, 190, 80, 130];
-                    const width = 500;
-                    const height = 200;
-                    const step = width / (data.length - 1);
-                    let path = `M0,${height - data[0]}`;
-                    let area = `M0,${height - data[0]}`;
-                    
-                    data.forEach((point, i) => {
-                        if (i > 0) {
-                            path += ` L${i * step},${height - point}`;
-                            area += ` L${i * step},${height - point}`;
-                        }
-                    });
-                    
-                    area += ` L${width},${height} L0,${height} Z`;
-                    
-                    chart.innerHTML = `
-                        <svg width="100%" height="100%" viewBox="0 0 ${width} ${height}">
-                            <defs>
-                                <linearGradient id="chart-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" stop-color="#2563eb" stop-opacity="0.3" />
-                                    <stop offset="100%" stop-color="#2563eb" stop-opacity="0" />
-                                </linearGradient>
-                            </defs>
-                            <path class="chart-line" d="${path}" />
-                            <path class="chart-area" d="${area}" />
-                        </svg>
-                    `;
-                }
+            // Hide all asset lists
+            document.querySelectorAll('#crypto-assets, #stocks-assets').forEach(list => {
+                list.classList.add('hidden');
             });
-        }
-        
-        // Funciones para mostrar/ocultar modales
-        function showProfileModal() {
-            document.getElementById('profileModal').style.display = 'flex';
-        }
-        
-        function hideProfileModal() {
-            document.getElementById('profileModal').style.display = 'none';
-        }
-        
-        function showSendModal() {
-            document.getElementById('sendModal').style.display = 'flex';
-        }
-        
-        function hideSendModal() {
-            document.getElementById('sendModal').style.display = 'none';
-        }
-        
-        function showReceiveModal() {
-            document.getElementById('receiveModal').style.display = 'flex';
-        }
-        
-        function hideReceiveModal() {
-            document.getElementById('receiveModal').style.display = 'none';
-        }
-        
-        function showSwapModal() {
-            document.getElementById('swapModal').style.display = 'flex';
-        }
-        
-        function hideSwapModal() {
-            document.getElementById('swapModal').style.display = 'none';
-        }
-        
-        function showBuyModal() {
-            document.getElementById('buyModal').style.display = 'flex';
-        }
-        
-        function hideBuyModal() {
-            document.getElementById('buyModal').style.display = 'none';
-        }
-        
-        // Función para mostrar notificaciones
-        function showNotification(message) {
-            const notification = document.getElementById('notificationToast');
-            document.getElementById('notificationText').textContent = message;
-            notification.style.display = 'flex';
             
-            setTimeout(() => {
-                notification.style.display = 'none';
-            }, 3000);
+            // Show selected market assets
+            if (market === 'crypto') {
+                document.getElementById('crypto-assets').classList.remove('hidden');
+            } else if (market === 'stocks') {
+                document.getElementById('stocks-assets').classList.remove('hidden');
+            }
         }
-        
-        // Función para sincronizar datos (simulación con localStorage para full-stack feel)
-        function syncData() {
-            const syncBtn = document.querySelector('.header-btn:nth-child(2)');
-            syncBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+
+        function switchMarketTab(market) {
+            // Deactivate all market tabs
+            document.querySelectorAll('.market-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Simular llamada a "backend" usando localStorage
-            localStorage.setItem('syncedData', JSON.stringify(assetsData));
+            // Activate selected market tab
+            const marketTabs = document.querySelectorAll('.market-tab');
+            const activeIndex = Array.from(marketTabs).findIndex(tab => 
+                tab.getAttribute('onclick').includes(`'${market}'`)
+            );
             
-            setTimeout(() => {
-                syncBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
-                showNotification('Datos sincronizados correctamente');
-                // Recargar activos desde "backend"
-                const storedData = JSON.parse(localStorage.getItem('syncedData'));
-                if (storedData) {
-                    Object.assign(assetsData, storedData);
-                    renderAssets();
-                }
-            }, 1500);
-        }
-        
-        // Función para ejecutar operación de trading (mejorada con validación simple)
-        function executeTrade(type) {
-            const loader = document.getElementById('tradingLoader');
-            loader.style.display = 'flex';
-            
-            // Validar campos (simulación)
-            const amount = document.querySelector('.trading-view input[type="number"]:nth-of-type(1)').value;
-            if (parseFloat(amount) <= 0) {
-                loader.style.display = 'none';
-                showNotification('Cantidad inválida');
-                return;
+            if (activeIndex >= 0) {
+                marketTabs[activeIndex].classList.add('active');
             }
             
-            setTimeout(() => {
-                loader.style.display = 'none';
-                showNotification(`Operación de ${type === 'buy' ? 'compra' : 'venta'} ejecutada correctamente`);
-                // Actualizar balance simulado
-                const balanceAmount = document.getElementById('balanceAmount');
-                let currentBalance = parseFloat(balanceAmount.textContent.replace('$', '').replace(',', ''));
-                currentBalance += type === 'buy' ? -100 : 100;  // Simulación simple
-                balanceAmount.textContent = `$${currentBalance.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-            }, 2000);
+            // Hide all market lists
+            document.querySelectorAll('#markets-crypto, #markets-stocks').forEach(list => {
+                list.classList.add('hidden');
+            });
+            
+            // Show selected market list
+            if (market === 'crypto') {
+                document.getElementById('markets-crypto').classList.remove('hidden');
+            } else if (market === 'stocks') {
+                document.getElementById('markets-stocks').classList.remove('hidden');
+            }
         }
-        
-        // Función para mostrar/ocultar centro de notificaciones
+
+        function switchTradingPair(pair) {
+            currentTradingPair = pair;
+            
+            // Deactivate all trading pairs
+            document.querySelectorAll('.trading-pair').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            // Activate selected trading pair
+            const tradingPairs = document.querySelectorAll('.trading-pair');
+            const activeIndex = Array.from(tradingPairs).findIndex(p => 
+                p.getAttribute('onclick').includes(`'${pair}'`)
+            );
+            
+            if (activeIndex >= 0) {
+                tradingPairs[activeIndex].classList.add('active');
+            }
+            
+            // Update chart title
+            document.getElementById('chart-title').textContent = pair;
+            
+            // Update chart data
+            updateSimpleChart(pair);
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function showSendModal() {
+            showModal('sendModal');
+        }
+
+        function showReceiveModal() {
+            showModal('receiveModal');
+        }
+
+        function showSwapModal() {
+            // Reset form
+            document.getElementById('swapFromAmount').value = '';
+            document.getElementById('swapToAmount').value = '';
+            calculateSwapRate();
+            showModal('swapModal');
+        }
+
+        function showBuyModal() {
+            // Reset form
+            document.getElementById('buyAmount').value = '';
+            document.getElementById('buyTotal').value = '$0.00';
+            calculateBuyTotal();
+            showModal('buyModal');
+        }
+
+        function showTradeModal(type, symbol = null) {
+            const title = document.getElementById('trade-modal-title');
+            const button = document.getElementById('trade-modal-button');
+            
+            const assetSymbol = symbol || currentTradingPair.replace('USD', '');
+            
+            if (type === 'buy') {
+                title.textContent = `Comprar ${assetSymbol}`;
+                button.textContent = 'Confirmar Compra';
+                button.className = 'btn btn-primary';
+                button.style.background = 'var(--success)';
+            } else {
+                title.textContent = `Vender ${assetSymbol}`;
+                button.textContent = 'Confirmar Venta';
+                button.className = 'btn btn-primary';
+                button.style.background = 'var(--danger)';
+            }
+            
+            // Reset amount
+            document.getElementById('modal-trade-amount').value = '';
+            document.getElementById('modal-trade-total').value = '$0.00';
+            
+            showModal('tradeModal');
+        }
+
+        function showAssetDetails(asset) {
+            // Obtener datos del activo
+            const portfolio = QuantumDB.currentUser.portfolio;
+            const assetData = portfolio.assets.find(a => a.symbol === asset);
+            
+            if (assetData) {
+                document.getElementById('assetDetailsTitle').textContent = `Detalles de ${asset}`;
+                
+                // Configurar icono
+                const iconElement = document.getElementById('assetDetailsIcon');
+                if (['BTC', 'ETH', 'USDC', 'SOL', 'ADA', 'DOT'].includes(asset)) {
+                    iconElement.innerHTML = `<i class="fab fa-${asset.toLowerCase()}"></i>`;
+                } else {
+                    iconElement.innerHTML = asset;
+                    iconElement.style.background = getStockColor(asset);
+                }
+                
+                // Obtener precio actual del mercado
+                let currentPrice = 0;
+                let change = 0;
+                
+                if (['BTC', 'ETH', 'USDC', 'SOL', 'ADA', 'DOT'].includes(asset)) {
+                    const marketData = QuantumDB.currentUser.markets.crypto.find(m => m.symbol === asset);
+                    if (marketData) {
+                        currentPrice = marketData.price;
+                        change = marketData.change;
+                    }
+                } else {
+                    const marketData = QuantumDB.currentUser.markets.stocks.find(m => m.symbol === asset);
+                    if (marketData) {
+                        currentPrice = marketData.price;
+                        change = marketData.change;
+                    }
+                }
+                
+                // Actualizar detalles
+                document.getElementById('assetDetailsPrice').textContent = `$${currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('assetDetailsChange').textContent = `${change >= 0 ? '+' : ''}${change}%`;
+                document.getElementById('assetDetailsChange').className = `detail-value ${change >= 0 ? 'positive' : 'negative'}`;
+                document.getElementById('assetDetailsAmount').textContent = `${assetData.amount} ${asset}`;
+                document.getElementById('assetDetailsValue').textContent = `$${assetData.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                showModal('assetDetailsModal');
+            }
+        }
+
         function showNotificationCenter() {
             document.getElementById('notificationCenter').classList.add('open');
         }
-        
-        function hideNotificationCenter() {
+
+        function closeNotificationCenter() {
             document.getElementById('notificationCenter').classList.remove('open');
         }
-        
-        // Funciones para el Quiz en Academy (nueva mejora)
-        let selectedOption = null;
-        
-        function selectOption(option) {
-            document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
-            option.classList.add('selected');
-            selectedOption = option.textContent;
+
+        function searchAssets(query) {
+            const cryptoItems = document.querySelectorAll('#markets-crypto .asset-item');
+            const stockItems = document.querySelectorAll('#markets-stocks .asset-item');
+            
+            const allItems = [...cryptoItems, ...stockItems];
+            
+            allItems.forEach(item => {
+                const assetName = item.querySelector('.asset-name').textContent.toLowerCase();
+                const assetSymbol = item.querySelector('.asset-amount').textContent.toLowerCase();
+                
+                if (assetName.includes(query.toLowerCase()) || assetSymbol.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
-        
-        function submitQuiz() {
-            if (!selectedOption) {
-                showNotification('Selecciona una opción');
+
+        function showSecuritySettings() {
+            showNotification('Configuración de seguridad abierta');
+        }
+
+        function showNotificationsSettings() {
+            showNotification('Configuración de notificaciones abierta');
+        }
+
+        function showBackupSettings() {
+            showNotification('Opciones de respaldo mostradas');
+        }
+
+        function showAppearanceSettings() {
+            showNotification('Configuración de apariencia abierta');
+        }
+
+        function showPrivacySettings() {
+            showNotification('Configuración de privacidad abierta');
+        }
+
+        function showHelp() {
+            showNotification('Centro de ayuda abierto');
+        }
+
+        function showProfileModal() {
+            showModal('profileModal');
+        }
+
+        async function sendTransaction() {
+            const amount = parseFloat(document.getElementById('sendAmount').value);
+            const asset = document.getElementById('sendAsset').value;
+            
+            if (!amount || amount <= 0) {
+                showNotification('Ingresa una cantidad válida', 'error');
                 return;
             }
             
-            const correctAnswer = 'Momentum';
-            const result = document.getElementById('quizResult');
-            document.querySelectorAll('.quiz-option').forEach(opt => {
-                if (opt.textContent === correctAnswer) {
-                    opt.classList.add('correct');
-                } else if (opt.textContent === selectedOption) {
-                    opt.classList.add('incorrect');
-                }
+            hideModal('sendModal');
+            
+            // Mostrar loading
+            showNotification('Procesando transacción...');
+            
+            // Simular envío a blockchain
+            setTimeout(async () => {
+                // Añadir transacción
+                await QuantumDB.apiCall('/transaction/send', {
+                    type: 'send',
+                    asset: asset,
+                    amount: -amount,
+                    to: 'Dirección destino',
+                    date: new Date().toLocaleString(),
+                    status: 'completed'
+                });
+                
+                // Actualizar UI
+                await loadPortfolio();
+                await loadTransactions();
+                
+                showNotification('Transacción enviada correctamente');
+            }, 2000);
+        }
+
+        async function executeTrade() {
+            const amount = parseFloat(document.getElementById('modal-trade-amount').value);
+            const price = parseFloat(document.getElementById('modal-trade-price').value.replace('$', '').replace(',', ''));
+            
+            if (!amount || amount <= 0) {
+                showNotification('Ingresa una cantidad válida', 'error');
+                return;
+            }
+            
+            hideModal('tradeModal');
+            
+            // Mostrar loading en trading controls
+            document.getElementById('tradeLoading').style.display = 'flex';
+            
+            // Ejecutar trade
+            const result = await QuantumDB.apiCall('/trade/execute', {
+                symbol: currentTradingPair.replace('USD', ''),
+                side: document.getElementById('trade-modal-button').textContent.includes('Compra') ? 'buy' : 'sell',
+                amount: amount,
+                price: price
             });
             
-            result.textContent = selectedOption === correctAnswer ? '¡Correcto!' : 'Incorrecto. Intenta de nuevo.';
-            result.style.color = selectedOption === correctAnswer ? var(--success) : var(--danger);
+            // Ocultar loading
+            document.getElementById('tradeLoading').style.display = 'none';
             
-            // Reset después de 3s
+            if (result.success) {
+                // Actualizar UI
+                await loadPortfolio();
+                await loadTransactions();
+                
+                showNotification('Orden ejecutada correctamente');
+            } else {
+                showNotification('Error ejecutando la orden', 'error');
+            }
+        }
+
+        async function executeSwap() {
+            const fromAsset = document.getElementById('swapFromAsset').value;
+            const toAsset = document.getElementById('swapToAsset').value;
+            const fromAmount = parseFloat(document.getElementById('swapFromAmount').value);
+            const toAmount = parseFloat(document.getElementById('swapToAmount').value);
+            
+            if (!fromAmount || fromAmount <= 0) {
+                showNotification('Ingresa una cantidad válida', 'error');
+                return;
+            }
+            
+            hideModal('swapModal');
+            
+            // Mostrar loading
+            showNotification('Procesando intercambio...');
+            
+            // Ejecutar swap
+            const result = await QuantumDB.apiCall('/swap/execute', {
+                fromAsset: fromAsset,
+                toAsset: toAsset,
+                fromAmount: fromAmount,
+                toAmount: toAmount
+            });
+            
+            if (result.success) {
+                // Actualizar UI
+                await loadPortfolio();
+                await loadTransactions();
+                
+                showNotification('Intercambio ejecutado correctamente');
+            } else {
+                showNotification('Error ejecutando el intercambio', 'error');
+            }
+        }
+
+        async function executeBuy() {
+            const asset = document.getElementById('buyAsset').value;
+            const amount = parseFloat(document.getElementById('buyAmount').value);
+            const price = parseFloat(document.getElementById('buyPrice').value.replace('$', '').replace(',', ''));
+            
+            if (!amount || amount <= 0) {
+                showNotification('Ingresa una cantidad válida', 'error');
+                return;
+            }
+            
+            hideModal('buyModal');
+            
+            // Mostrar loading
+            showNotification('Procesando compra...');
+            
+            // Ejecutar compra
+            const result = await QuantumDB.apiCall('/buy/execute', {
+                asset: asset,
+                amount: amount,
+                price: price
+            });
+            
+            if (result.success) {
+                // Actualizar UI
+                await loadPortfolio();
+                await loadTransactions();
+                
+                showNotification('Compra ejecutada correctamente');
+            } else {
+                showNotification('Error ejecutando la compra', 'error');
+            }
+        }
+
+        function copyAddress() {
+            navigator.clipboard.writeText('0x742d35Cc6634C893292Ce8bB6239C002Ad8e6b59');
+            showNotification('Dirección copiada al portapapeles');
+        }
+
+        function showNotification(message, type = 'success') {
+            // Remove existing notification if any
+            const existingNotification = document.querySelector('.notification');
+            if (existingNotification) {
+                existingNotification.remove();
+            }
+            
+            // Create new notification
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            const iconColor = type === 'success' ? 'var(--success)' : 'var(--danger)';
+            const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            
+            notification.innerHTML = `
+                <i class="fas ${icon}" style="color: ${iconColor};"></i>
+                <span>${message}</span>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Add to notification center
+            const notificationList = document.getElementById('notificationList');
+            const notificationItem = document.createElement('div');
+            notificationItem.className = `notification-item ${type === 'success' ? 'success' : type === 'error' ? 'error' : ''}`;
+            notificationItem.innerHTML = `
+                <div><strong>${type === 'success' ? 'Operación exitosa' : type === 'error' ? 'Error' : 'Notificación'}</strong></div>
+                <div>${message}</div>
+                <div style="font-size: 12px; color: var(--text-secondary);">${new Date().toLocaleString()}</div>
+            `;
+            notificationList.prepend(notificationItem);
+            
+            // Remove notification after animation
             setTimeout(() => {
-                document.querySelectorAll('.quiz-option').forEach(opt => {
-                    opt.classList.remove('selected', 'correct', 'incorrect');
-                });
-                result.textContent = '';
-                selectedOption = null;
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
             }, 3000);
         }
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Quantum Wallet inicializada");
+            
+            // Add some interactive feedback
+            document.querySelectorAll('.action-btn, .asset-item, .nav-item').forEach(element => {
+                element.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                element.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+        });
+
+        // Prevent zoom on double tap for mobile
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function (event) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
     </script>
 </body>
 </html>
